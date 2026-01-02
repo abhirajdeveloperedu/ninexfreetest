@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     const body = req.body || {};
     let hours = parseInt(body.hours) || 1;
     if (hours < 1) hours = 1;
-    if (hours > 2) hours = 2;
+    if (hours > 3) hours = 3;
 
     console.log(`🔑 GENERATE: IP=${clientIP}, hours=${hours}`);
 
