@@ -7,8 +7,30 @@ const supabase = SUPABASE_SERVICE_KEY ? createClient(SUPABASE_URL, SUPABASE_SERV
     auth: { autoRefreshToken: false, persistSession: false }
 }) : null;
 
+// Allowed referrer domains (shortener services)
+const ALLOWED_REFERRERS = [
+    'gplinks.co',
+    'gplinks.in',
+    'shrinkme.io',
+    'linkvertise.com',
+    'link-hub.net',
+    'ouo.io',
+    'exe.io'
+];
+
+function isValidReferrer(referer) {
+    if (!referer) return false;
+    try {
+        const url = new URL(referer);
+        return ALLOWED_REFERRERS.some(domain =>
+            url.hostname === domain || url.hostname.endsWith('.' + domain)
+        );
+    } catch {
+        return false;
+    }
+}
+
 export default async function handler(req, res) {
-    // Get step from URL
     const { step } = req.query;
 
     if (!step) {
@@ -18,29 +40,41 @@ export default async function handler(req, res) {
     const stepNum = parseInt(step);
     const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
         req.socket?.remoteAddress || 'unknown';
+    const referer = req.headers['referer'] || req.headers['referrer'] || '';
 
-    console.log(`📥 Callback: IP ${clientIP} completed step ${stepNum}`);
+    // ═══════════════════════════════════════════════════════════════
+    // ANTI-BYPASS: Check if request came from allowed shortener
+    // ═══════════════════════════════════════════════════════════════
+    const validReferrer = isValidReferrer(referer);
+
+    console.log(`📥 Callback: IP=${clientIP}, step=${stepNum}, referer=${referer}, valid=${validReferrer}`);
+
+    // If referrer is not from shortener, don't store verification
+    // But still redirect (to not reveal the check)
+    if (!validReferrer) {
+        console.log(`🚫 Blocked: Invalid referrer - not from shortener`);
+        // Redirect without storing - acts like it worked but won't
+        return res.redirect(`/?verified=${stepNum}`);
+    }
 
     if (supabase) {
         try {
-            // Store verification in database
             await supabase
                 .from('link_verifications')
                 .insert({
                     ip_address: clientIP,
                     step: stepNum,
                     verified_at: new Date().toISOString(),
-                    expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 min expiry
-                    used: false
+                    expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+                    used: false,
+                    referrer: referer.substring(0, 255)
                 });
 
-            console.log(`✅ Stored verification: IP ${clientIP}, step ${stepNum}`);
+            console.log(`✅ Verified: IP ${clientIP}, step ${stepNum}`);
         } catch (error) {
-            console.error('Failed to store verification:', error);
-            // Continue anyway - redirect user
+            console.error('Verification storage failed:', error);
         }
     }
 
-    // Redirect to homepage with verification status
     return res.redirect(`/?verified=${stepNum}`);
 }
