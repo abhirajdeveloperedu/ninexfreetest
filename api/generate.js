@@ -7,27 +7,6 @@ const supabase = SUPABASE_SERVICE_KEY ? createClient(SUPABASE_URL, SUPABASE_SERV
     auth: { autoRefreshToken: false, persistSession: false }
 }) : null;
 
-// In-memory rate limiting for Vercel (resets on cold start)
-const rateLimitMap = new Map();
-
-function checkRateLimit(identifier, maxAttempts = 5, windowMs = 3600000) {
-    const now = Date.now();
-    if (!rateLimitMap.has(identifier)) {
-        rateLimitMap.set(identifier, { count: 1, resetAt: now + windowMs });
-        return { allowed: true };
-    }
-    const record = rateLimitMap.get(identifier);
-    if (now > record.resetAt) {
-        rateLimitMap.set(identifier, { count: 1, resetAt: now + windowMs });
-        return { allowed: true };
-    }
-    if (record.count >= maxAttempts) {
-        return { allowed: false, retryAfter: Math.ceil((record.resetAt - now) / 1000) };
-    }
-    record.count++;
-    return { allowed: true };
-}
-
 function randomString(length) {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -48,44 +27,65 @@ export default async function handler(req, res) {
     }
 
     if (req.method !== 'POST') {
-        return res.status(405).json({ success: false, error: { message: 'Method not allowed' } });
+        return res.status(405).json({ success: false, error: 'Method not allowed' });
     }
 
     if (!supabase) {
         return res.status(500).json({
             success: false,
-            error: { message: 'Server not configured. Set SUPABASE_SERVICE_KEY.' }
+            error: 'Server not configured. Set SUPABASE_SERVICE_KEY.'
         });
     }
 
-    // Get client IP for rate limiting
     const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
         req.socket?.remoteAddress || 'unknown';
 
-    // Rate limit: 5 per hour per IP
-    const rateLimit = checkRateLimit(`gen:${clientIP}`, 5, 3600000);
-    if (!rateLimit.allowed) {
-        return res.status(429).json({
-            success: false,
-            error: { message: `Rate limited. Try again in ${rateLimit.retryAfter} seconds.` }
-        });
-    }
-
     try {
-        // Parse request body
         const body = req.body || {};
-        
-        // Validate hours (1 or 2)
         let hours = parseInt(body.hours) || 1;
         if (hours < 1) hours = 1;
         if (hours > 2) hours = 2;
 
-        // Generate username & password
+        // ═══════════════════════════════════════════════════════════
+        // ANTI-BYPASS: Verify IP completed the shortener
+        // ═══════════════════════════════════════════════════════════
+        const requiredStep = hours; // 1-hour needs step 1, 2-hours needs step 2
+
+        const { data: verification, error: verifyError } = await supabase
+            .from('link_verifications')
+            .select('*')
+            .eq('ip_address', clientIP)
+            .eq('step', requiredStep)
+            .eq('used', false)
+            .gte('expires_at', new Date().toISOString())
+            .order('verified_at', { ascending: false })
+            .limit(1)
+            .single();
+
+        if (verifyError || !verification) {
+            console.log(`🚫 Anti-bypass blocked: IP ${clientIP} - no valid verification for step ${requiredStep}`);
+            return res.status(403).json({
+                success: false,
+                error: 'Please complete the verification link first. No valid verification found.'
+            });
+        }
+
+        // Mark verification as used
+        await supabase
+            .from('link_verifications')
+            .update({ used: true, used_at: new Date().toISOString() })
+            .eq('id', verification.id);
+
+        console.log(`✅ Anti-bypass passed: IP ${clientIP} verified for ${hours}h`);
+
+        // ═══════════════════════════════════════════════════════════
+        // Generate the key
+        // ═══════════════════════════════════════════════════════════
         const timestamp = Date.now().toString(36);
         const username = `trial_${timestamp}${randomString(4)}`;
         const password = randomString(8);
 
-        // Hash password via Supabase RPC
+        // Hash password
         const { data: passwordHash, error: hashError } = await supabase.rpc('hash_password', {
             password: password
         });
@@ -95,10 +95,10 @@ export default async function handler(req, res) {
             throw new Error('Password hashing failed');
         }
 
-        // Calculate expiry based on selected hours
+        // Calculate expiry
         const expiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
 
-        // Create user in database
+        // Create user
         const { error: createError } = await supabase
             .from('users')
             .insert({
@@ -112,7 +112,7 @@ export default async function handler(req, res) {
                 is_active: true,
                 is_banned: false,
                 payment_status: 'trial',
-                notes: `Trial ${hours}h from IP: ${clientIP}`
+                notes: `Trial ${hours}h | IP: ${clientIP} | Anti-bypass verified`
             });
 
         if (createError) {
@@ -120,7 +120,7 @@ export default async function handler(req, res) {
             throw new Error('Failed to create user');
         }
 
-        console.log(`✅ Generated ${hours}h trial: ${username} (expires: ${expiresAt.toISOString()})`);
+        console.log(`🎉 Generated ${hours}h key: ${username} for IP ${clientIP}`);
 
         return res.status(200).json({
             success: true,
@@ -134,7 +134,7 @@ export default async function handler(req, res) {
         console.error('Generate error:', error);
         return res.status(500).json({
             success: false,
-            error: { message: error.message || 'Failed to generate key. Try again.' }
+            error: error.message || 'Failed to generate key. Try again.'
         });
     }
 }
