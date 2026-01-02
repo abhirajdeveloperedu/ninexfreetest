@@ -17,7 +17,6 @@ function randomString(length) {
 }
 
 export default async function handler(req, res) {
-    // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -33,7 +32,7 @@ export default async function handler(req, res) {
     if (!supabase) {
         return res.status(500).json({
             success: false,
-            error: 'Server not configured. Set SUPABASE_SERVICE_KEY.'
+            error: 'Server not configured.'
         });
     }
 
@@ -47,58 +46,53 @@ export default async function handler(req, res) {
         if (hours > 2) hours = 2;
 
         // ═══════════════════════════════════════════════════════════
-        // ANTI-BYPASS: Verify IP completed the shortener
+        // ANTI-BYPASS: Verify IP has COMPLETED verification for required step
         // ═══════════════════════════════════════════════════════════
-        const requiredStep = hours; // 1-hour needs step 1, 2-hours needs step 2
+        const requiredStep = hours;
 
         const { data: verification, error: verifyError } = await supabase
             .from('link_verifications')
             .select('*')
             .eq('ip_address', clientIP)
             .eq('step', requiredStep)
+            .eq('status', 'completed')
             .eq('used', false)
             .gte('expires_at', new Date().toISOString())
-            .order('verified_at', { ascending: false })
+            .order('completed_at', { ascending: false })
             .limit(1)
             .single();
 
         if (verifyError || !verification) {
-            console.log(`🚫 Anti-bypass blocked: IP ${clientIP} - no valid verification for step ${requiredStep}`);
+            console.log(`🚫 BLOCKED: IP ${clientIP} has no completed verification for step ${requiredStep}`);
             return res.status(403).json({
                 success: false,
-                error: 'Please complete the verification link first. No valid verification found.'
+                error: 'Verification not completed. Please complete the link first.'
             });
         }
 
-        // Mark verification as used
+        // Mark as used
         await supabase
             .from('link_verifications')
             .update({ used: true, used_at: new Date().toISOString() })
             .eq('id', verification.id);
 
-        console.log(`✅ Anti-bypass passed: IP ${clientIP} verified for ${hours}h`);
+        console.log(`✅ Generating key: IP ${clientIP}, ${hours}h, token ${verification.token.substring(0, 8)}...`);
 
         // ═══════════════════════════════════════════════════════════
-        // Generate the key
+        // Generate Key
         // ═══════════════════════════════════════════════════════════
         const timestamp = Date.now().toString(36);
         const username = `trial_${timestamp}${randomString(4)}`;
         const password = randomString(8);
 
-        // Hash password
         const { data: passwordHash, error: hashError } = await supabase.rpc('hash_password', {
             password: password
         });
 
-        if (hashError) {
-            console.error('Hash error:', hashError);
-            throw new Error('Password hashing failed');
-        }
+        if (hashError) throw hashError;
 
-        // Calculate expiry
         const expiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
 
-        // Create user
         const { error: createError } = await supabase
             .from('users')
             .insert({
@@ -112,21 +106,18 @@ export default async function handler(req, res) {
                 is_active: true,
                 is_banned: false,
                 payment_status: 'trial',
-                notes: `Trial ${hours}h | IP: ${clientIP} | Anti-bypass verified`
+                notes: `Trial ${hours}h | IP: ${clientIP} | Token: ${verification.token.substring(0, 8)}`
             });
 
-        if (createError) {
-            console.error('Create error:', createError);
-            throw new Error('Failed to create user');
-        }
+        if (createError) throw createError;
 
-        console.log(`🎉 Generated ${hours}h key: ${username} for IP ${clientIP}`);
+        console.log(`🎉 Generated: ${username} (${hours}h)`);
 
         return res.status(200).json({
             success: true,
-            username: username,
-            password: password,
-            hours: hours,
+            username,
+            password,
+            hours,
             expires_at: expiresAt.toISOString()
         });
 
@@ -134,7 +125,7 @@ export default async function handler(req, res) {
         console.error('Generate error:', error);
         return res.status(500).json({
             success: false,
-            error: error.message || 'Failed to generate key. Try again.'
+            error: error.message || 'Failed to generate key.'
         });
     }
 }

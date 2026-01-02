@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/start",
+      "destination": "/api/start"
+    },
+    {
       "source": "/api/callback",
       "destination": "/api/callback"
     },

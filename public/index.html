@@ -823,22 +823,42 @@
             document.getElementById('btn-open-link').textContent = 'Open Link';
         }
 
-        function openLink() {
+        async function openLink() {
             const stepNum = state.completedSteps + 1;
             const link = SHORTENER_LINKS[stepNum];
 
-            if (!link || link.includes('YOUR_ID')) {
-                alert('Shortener links not configured! Check the code.');
+            if (!link || link.includes('YOUR_ID') || link.includes('PLACEHOLDER')) {
+                alert('Shortener links not configured!');
                 return;
             }
 
-            // Open the shortener link
-            window.open(link, '_blank');
-
-            // Update button
             const btn = document.getElementById('btn-open-link');
             btn.disabled = true;
-            btn.textContent = '⏳ Complete the link...';
+            btn.innerHTML = '<span class="loading-spinner"></span> Starting...';
+
+            try {
+                // ANTI-BYPASS: Create pending token before opening shortener
+                const res = await fetch('/api/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ step: stepNum })
+                });
+
+                const data = await res.json();
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to start');
+                }
+
+                // Now open the shortener
+                window.open(link, '_blank');
+
+                btn.textContent = '⏳ Complete the link...';
+            } catch (error) {
+                console.error('Start error:', error);
+                // Still open the link even if start fails (for testing)
+                window.open(link, '_blank');
+                btn.textContent = '⏳ Complete the link...';
+            }
         }
 
         async function generateKey() {
