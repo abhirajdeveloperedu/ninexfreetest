@@ -8,61 +8,46 @@ const supabase = SUPABASE_SERVICE_KEY ? createClient(SUPABASE_URL, SUPABASE_SERV
 }) : null;
 
 export default async function handler(req, res) {
-    const { step } = req.query;
+    const { hours } = req.query;
+    const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
+    const hoursNum = parseInt(hours) || 1;
 
-    if (!step) {
-        return res.redirect('/?error=missing_step');
-    }
+    console.log(`📥 CALLBACK: IP=${clientIP}, hours=${hoursNum}`);
 
-    const stepNum = parseInt(step);
-    const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
-        req.socket?.remoteAddress || 'unknown';
+    if (supabase) {
+        try {
+            // Find pending verification for this IP
+            const { data, error } = await supabase
+                .from('link_verifications')
+                .select('*')
+                .eq('ip_address', clientIP)
+                .eq('status', 'pending')
+                .gte('expires_at', new Date().toISOString())
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single();
 
-    console.log(`📥 Callback: IP=${clientIP}, step=${stepNum}`);
+            if (error || !data) {
+                console.log(`❌ No pending verification for IP ${clientIP}`);
+                return res.redirect(`/?error=no_verification`);
+            }
 
-    if (!supabase) {
-        return res.redirect(`/?verified=${stepNum}`);
-    }
+            // Mark as completed
+            await supabase
+                .from('link_verifications')
+                .update({
+                    status: 'completed',
+                    completed_at: new Date().toISOString(),
+                    hours: hoursNum  // Update with actual hours from callback
+                })
+                .eq('id', data.id);
 
-    try {
-        // ═══════════════════════════════════════════════════════════
-        // ANTI-BYPASS: Check if this IP has a PENDING token for this step
-        // Token must be created within last 5 minutes
-        // ═══════════════════════════════════════════════════════════
-        const { data: pendingToken, error: findError } = await supabase
-            .from('link_verifications')
-            .select('*')
-            .eq('ip_address', clientIP)
-            .eq('step', stepNum)
-            .eq('status', 'pending')
-            .eq('used', false)
-            .gte('expires_at', new Date().toISOString())
-            .order('verified_at', { ascending: false })
-            .limit(1)
-            .single();
-
-        if (findError || !pendingToken) {
-            console.log(`🚫 BLOCKED: No pending token for IP ${clientIP}, step ${stepNum}`);
-            // Silently redirect but don't mark as verified
-            // User will see "verified" but key generation will fail
-            return res.redirect(`/?error=no_pending`);
+            console.log(`✅ Verified: IP=${clientIP}, hours=${hoursNum}`);
+        } catch (e) {
+            console.error('Callback error:', e);
         }
-
-        // Update token status to "completed"
-        await supabase
-            .from('link_verifications')
-            .update({
-                status: 'completed',
-                completed_at: new Date().toISOString()
-            })
-            .eq('id', pendingToken.id);
-
-        console.log(`✅ VERIFIED: IP ${clientIP}, step ${stepNum}, token ${pendingToken.token.substring(0, 8)}...`);
-
-        return res.redirect(`/?verified=${stepNum}`);
-
-    } catch (error) {
-        console.error('Callback error:', error);
-        return res.redirect('/?error=server_error');
     }
+
+    // Redirect to success page with hours
+    return res.redirect(`/?success=true&hours=${hoursNum}`);
 }

@@ -7,13 +7,11 @@ const supabase = SUPABASE_SERVICE_KEY ? createClient(SUPABASE_URL, SUPABASE_SERV
     auth: { autoRefreshToken: false, persistSession: false }
 }) : null;
 
-function randomString(length) {
+function randomString(len) {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
+    let r = '';
+    for (let i = 0; i < len; i++) r += chars[Math.floor(Math.random() * chars.length)];
+    return r;
 }
 
 export default async function handler(req, res) {
@@ -21,111 +19,84 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
+    if (req.method === 'OPTIONS') return res.status(200).end();
+    if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' });
+    if (!supabase) return res.status(500).json({ success: false, error: 'Server not configured' });
 
-    if (req.method !== 'POST') {
-        return res.status(405).json({ success: false, error: 'Method not allowed' });
-    }
+    const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
+    const body = req.body || {};
+    let hours = parseInt(body.hours) || 1;
+    if (hours < 1) hours = 1;
+    if (hours > 2) hours = 2;
 
-    if (!supabase) {
-        return res.status(500).json({
-            success: false,
-            error: 'Server not configured.'
-        });
-    }
-
-    const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
-        req.socket?.remoteAddress || 'unknown';
+    console.log(`🔑 GENERATE: IP=${clientIP}, hours=${hours}`);
 
     try {
-        const body = req.body || {};
-        let hours = parseInt(body.hours) || 1;
-        if (hours < 1) hours = 1;
-        if (hours > 2) hours = 2;
-
-        // ═══════════════════════════════════════════════════════════
-        // ANTI-BYPASS: Verify IP has COMPLETED verification for required step
-        // ═══════════════════════════════════════════════════════════
-        const requiredStep = hours;
-
-        const { data: verification, error: verifyError } = await supabase
+        // Check for completed verification
+        const { data: verification, error: verifyErr } = await supabase
             .from('link_verifications')
             .select('*')
             .eq('ip_address', clientIP)
-            .eq('step', requiredStep)
             .eq('status', 'completed')
-            .eq('used', false)
             .gte('expires_at', new Date().toISOString())
             .order('completed_at', { ascending: false })
             .limit(1)
             .single();
 
-        if (verifyError || !verification) {
-            console.log(`🚫 BLOCKED: IP ${clientIP} has no completed verification for step ${requiredStep}`);
+        if (verifyErr || !verification) {
+            console.log(`🚫 BLOCKED: No completed verification for IP ${clientIP}`);
             return res.status(403).json({
                 success: false,
-                error: 'Verification not completed. Please complete the link first.'
+                error: 'Please complete the verification link first!'
             });
         }
 
-        // Mark as used
+        // Use hours from verification if available
+        const keyHours = verification.hours || hours;
+
+        // Mark verification as used
         await supabase
             .from('link_verifications')
-            .update({ used: true, used_at: new Date().toISOString() })
+            .update({ status: 'used', used_at: new Date().toISOString() })
             .eq('id', verification.id);
 
-        console.log(`✅ Generating key: IP ${clientIP}, ${hours}h, token ${verification.token.substring(0, 8)}...`);
-
-        // ═══════════════════════════════════════════════════════════
-        // Generate Key
-        // ═══════════════════════════════════════════════════════════
-        const timestamp = Date.now().toString(36);
-        const username = `trial_${timestamp}${randomString(4)}`;
+        // Generate key
+        const username = `trial_${Date.now().toString(36)}${randomString(4)}`;
         const password = randomString(8);
 
-        const { data: passwordHash, error: hashError } = await supabase.rpc('hash_password', {
-            password: password
+        const { data: hash, error: hashErr } = await supabase.rpc('hash_password', { password });
+        if (hashErr) throw hashErr;
+
+        const expiresAt = new Date(Date.now() + keyHours * 60 * 60 * 1000);
+
+        const { error: createErr } = await supabase.from('users').insert({
+            username,
+            password_hash: hash,
+            account_type: 'user',
+            device_type: 'single',
+            purchased_days: 0,
+            first_login_at: new Date().toISOString(),
+            expires_at: expiresAt.toISOString(),
+            is_active: true,
+            is_banned: false,
+            payment_status: 'trial',
+            notes: `Trial ${keyHours}h | IP: ${clientIP}`
         });
 
-        if (hashError) throw hashError;
+        if (createErr) throw createErr;
 
-        const expiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
-
-        const { error: createError } = await supabase
-            .from('users')
-            .insert({
-                username: username,
-                password_hash: passwordHash,
-                account_type: 'user',
-                device_type: 'single',
-                purchased_days: 0,
-                first_login_at: new Date().toISOString(),
-                expires_at: expiresAt.toISOString(),
-                is_active: true,
-                is_banned: false,
-                payment_status: 'trial',
-                notes: `Trial ${hours}h | IP: ${clientIP} | Token: ${verification.token.substring(0, 8)}`
-            });
-
-        if (createError) throw createError;
-
-        console.log(`🎉 Generated: ${username} (${hours}h)`);
+        console.log(`🎉 SUCCESS: ${username} (${keyHours}h)`);
 
         return res.status(200).json({
             success: true,
             username,
             password,
-            hours,
+            hours: keyHours,
             expires_at: expiresAt.toISOString()
         });
 
     } catch (error) {
         console.error('Generate error:', error);
-        return res.status(500).json({
-            success: false,
-            error: error.message || 'Failed to generate key.'
-        });
+        return res.status(500).json({ success: false, error: 'Failed to generate key' });
     }
 }

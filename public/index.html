@@ -4,11 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NineX - Premium Access Key</title>
+    <title>NineX - Premium Access</title>
     <link rel="icon"
         href="https://mcopfvshhvajrtgbqsem.supabase.co/storage/v1/object/public/n/photo_2025-12-31%2021.00.21.jpeg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
     <style>
         * {
             margin: 0;
@@ -25,32 +24,12 @@
             justify-content: center;
             color: #fff;
             padding: 20px;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
         }
 
         .container {
-            max-width: 440px;
+            max-width: 420px;
             width: 100%;
             text-align: center;
-        }
-
-        .logo-container {
-            margin-bottom: 24px;
         }
 
         .logo {
@@ -73,14 +52,13 @@
             }
         }
 
-        .brand-name {
+        .brand {
             font-size: 1.8rem;
             font-weight: 800;
             background: linear-gradient(135deg, #a78bfa, #ec4899);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-top: 12px;
+            margin: 12px 0 24px;
         }
 
         .card {
@@ -96,207 +74,82 @@
             font-size: 1.3rem;
             font-weight: 700;
             margin-bottom: 8px;
-            background: linear-gradient(135deg, #fff, #a5b4fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .desc {
             font-size: 0.85rem;
             color: #94a3b8;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             line-height: 1.6;
         }
 
-        /* Plan Cards */
-        .plans-container {
+        .plans {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
-        .plan-card {
+        .plan {
             background: rgba(255, 255, 255, 0.02);
             border: 2px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 20px;
+            border-radius: 14px;
+            padding: 16px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .plan-card:hover {
+        .plan:hover {
             border-color: rgba(139, 92, 246, 0.4);
             transform: translateY(-2px);
         }
 
-        .plan-card.selected {
+        .plan.selected {
             border-color: #8b5cf6;
             background: rgba(139, 92, 246, 0.1);
         }
 
-        .plan-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
+        .plan-left {
+            text-align: left;
         }
 
-        .plan-duration {
-            font-size: 1.4rem;
+        .plan-hours {
+            font-size: 1.2rem;
             font-weight: 700;
-            color: #fff;
-        }
-
-        .plan-badge {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .plan-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #94a3b8;
-            font-size: 0.8rem;
         }
 
         .plan-links {
-            margin-top: 8px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .plan-links-text {
             font-size: 0.75rem;
             color: #64748b;
+            margin-top: 4px;
         }
 
-        .plan-links-count {
+        .plan-links span {
             color: #a78bfa;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.65rem;
             font-weight: 600;
         }
 
-        .check-circle {
-            width: 24px;
-            height: 24px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .plan-card.selected .check-circle {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            border-color: #8b5cf6;
-        }
-
-        .check-circle svg {
-            width: 14px;
-            height: 14px;
-            opacity: 0;
-        }
-
-        .plan-card.selected .check-circle svg {
-            opacity: 1;
-        }
-
-        /* Progress */
-        .progress-container {
-            margin-bottom: 28px;
-        }
-
-        .progress-steps {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .progress-step {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #64748b;
-            transition: all 0.3s ease;
-        }
-
-        .progress-step.active {
-            border-color: #8b5cf6;
-            color: #8b5cf6;
-            background: rgba(139, 92, 246, 0.1);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
-            }
-
-            50% {
-                box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
-            }
-        }
-
-        .progress-step.completed {
-            background: linear-gradient(135deg, #10b981, #059669);
-            border-color: #10b981;
-            color: white;
-        }
-
-        .progress-line {
-            width: 40px;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.1);
-            align-self: center;
-            border-radius: 2px;
-        }
-
-        .progress-line.completed {
-            background: linear-gradient(90deg, #10b981, #8b5cf6);
-        }
-
-        .progress-text {
-            font-size: 0.85rem;
-            color: #64748b;
-        }
-
-        .progress-text span {
-            color: #a78bfa;
-            font-weight: 600;
-        }
-
-        /* Buttons */
         .btn {
             width: 100%;
-            padding: 16px 24px;
+            padding: 14px;
             font-size: 0.95rem;
             font-weight: 600;
             color: white;
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s;
         }
 
         .btn:hover {
@@ -314,181 +167,70 @@
             background: linear-gradient(135deg, #10b981, #059669);
         }
 
-        .btn-green:hover {
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid rgba(139, 92, 246, 0.5);
-            color: #a78bfa;
-        }
-
-        .btn-outline:hover {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: #8b5cf6;
-            box-shadow: none;
-        }
-
-        /* Link Card */
-        .link-card {
-            background: rgba(139, 92, 246, 0.08);
-            border: 1px solid rgba(139, 92, 246, 0.2);
+        .result-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: 14px;
             padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .link-number {
-            font-size: 0.75rem;
-            color: #8b5cf6;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .link-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 4px;
-        }
-
-        .link-desc {
-            font-size: 0.8rem;
-            color: #94a3b8;
-        }
-
-        /* Result Box */
-        .result-box {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .result-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #10b981;
+            margin-bottom: 10px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            font-weight: 600;
         }
 
         .result-key {
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
-            font-size: 1rem;
-            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.95rem;
             background: rgba(0, 0, 0, 0.3);
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+            word-break: break-all;
             color: #a5f3c4;
         }
 
-        .timer-box {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+        .timer {
+            background: rgba(245, 158, 11, 0.1);
             border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 12px;
-            padding: 14px;
-            font-size: 0.85rem;
-            color: #fbbf24;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        /* Loading */
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Info Box */
-        .info-box {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 10px;
             padding: 12px;
-            margin-top: 16px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            text-align: left;
+            border-radius: 10px;
+            color: #fbbf24;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
         }
 
-        .info-box svg {
-            width: 18px;
-            height: 18px;
-            color: #3b82f6;
-            flex-shrink: 0;
-            margin-top: 2px;
+        .error-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 12px;
+            border-radius: 10px;
+            color: #f87171;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
         }
 
-        .info-box p {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            line-height: 1.5;
-        }
-
-        /* Success Checkmark */
-        .success-checkmark {
+        .success-icon {
             width: 60px;
             height: 60px;
-            margin: 0 auto 20px;
             background: linear-gradient(135deg, #10b981, #059669);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: scaleIn 0.5s ease;
+            margin: 0 auto 16px;
+            font-size: 1.5rem;
         }
 
-        @keyframes scaleIn {
-            from {
-                transform: scale(0);
-            }
-
-            50% {
-                transform: scale(1.2);
-            }
-
-            to {
-                transform: scale(1);
-            }
-        }
-
-        .success-checkmark svg {
-            width: 30px;
-            height: 30px;
-            color: white;
-        }
-
-        /* Stages */
         .stage {
             display: none;
         }
 
         .stage.active {
             display: block;
-            animation: fadeIn 0.4s ease;
+            animation: fadeIn 0.3s;
         }
 
         @keyframes fadeIn {
@@ -503,114 +245,98 @@
             }
         }
 
-        /* Error */
-        .error-box {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 10px;
-            padding: 12px;
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 30px auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .link-card {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            padding: 16px;
             margin-bottom: 16px;
-            color: #f87171;
-            font-size: 0.85rem;
+        }
+
+        .link-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .link-desc {
+            font-size: 0.8rem;
+            color: #94a3b8;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="logo-container">
-            <img src="https://mcopfvshhvajrtgbqsem.supabase.co/storage/v1/object/public/n/photo_2025-12-31%2021.00.21.jpeg"
-                class="logo" alt="NineX Logo">
-            <div class="brand-name">NineX</div>
-        </div>
+        <img src="https://mcopfvshhvajrtgbqsem.supabase.co/storage/v1/object/public/n/photo_2025-12-31%2021.00.21.jpeg"
+            class="logo">
+        <div class="brand">NineX</div>
 
         <div class="card">
-            <!-- Stage 1: Plan Selection -->
+            <!-- Stage 1: Select Plan -->
             <div class="stage active" id="stage-select">
-                <div class="title">🔐 Choose Your Access</div>
-                <div class="desc">Select duration and complete the verification links.</div>
+                <div class="title">🔐 Choose Access Duration</div>
+                <div class="desc">Select your plan and complete verification to get your key.</div>
 
-                <div id="error-display"></div>
+                <div id="error-box"></div>
 
-                <div class="plans-container">
-                    <div class="plan-card" id="plan-1h" onclick="selectPlan(1)">
-                        <div class="plan-header">
-                            <div class="plan-duration">1 Hour</div>
-                            <div class="check-circle">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="plan-info">
-                            <span>⏱️ Quick access for testing</span>
-                        </div>
-                        <div class="plan-links">
-                            <span class="plan-links-text">Complete <span class="plan-links-count">1 link</span></span>
+                <div class="plans">
+                    <div class="plan" onclick="selectPlan(1)">
+                        <div class="plan-left">
+                            <div class="plan-hours">1 Hour</div>
+                            <div class="plan-links">Complete <span>1 link</span></div>
                         </div>
                     </div>
-
-                    <div class="plan-card" id="plan-2h" onclick="selectPlan(2)">
-                        <div class="plan-header">
-                            <div class="plan-duration">2 Hours</div>
-                            <div class="plan-badge">Best Value</div>
+                    <div class="plan" onclick="selectPlan(2)">
+                        <div class="plan-left">
+                            <div class="plan-hours">2 Hours</div>
+                            <div class="plan-links">Complete <span>1 link</span></div>
                         </div>
-                        <div class="plan-info">
-                            <span>⚡ Extended gaming session</span>
-                        </div>
-                        <div class="plan-links">
-                            <span class="plan-links-text">Complete <span class="plan-links-count">1 link (2
-                                    steps)</span></span>
-                        </div>
+                        <div class="badge">BEST</div>
                     </div>
                 </div>
 
-                <button class="btn" id="btn-continue" onclick="startVerification()" disabled>Select a Plan</button>
-
-                <div class="info-box">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <p>Complete each link fully. After completion, you'll be redirected back here automatically.</p>
-                </div>
+                <button class="btn" id="btn-start" disabled onclick="startVerification()">Select a Plan</button>
             </div>
 
-            <!-- Stage 2: Link Verification -->
-            <div class="stage" id="stage-links">
+            <!-- Stage 2: Verification -->
+            <div class="stage" id="stage-verify">
                 <div class="title">🔗 Complete Verification</div>
-                <div class="desc">Click the button below to open your verification link. Complete it to get your key.
-                </div>
+                <div class="desc">Click below to open your verification link. Complete it to get your key.</div>
 
                 <div class="link-card">
-                    <div class="link-number" id="link-label">Verification</div>
-                    <div class="link-title">🌐 <span id="step-num">1</span>-Hour Access Link</div>
-                    <div class="link-desc">Opens in new tab. Complete all steps, then return here.</div>
+                    <div class="link-title">🌐 <span id="hours-display">1</span>-Hour Access</div>
+                    <div class="link-desc">Opens in new tab. Complete all steps then return here.</div>
                 </div>
 
-                <button class="btn" id="btn-open-link" onclick="openLink()">
-                    Open Verification Link
-                </button>
+                <button class="btn" id="btn-open" onclick="openLink()">Open Verification Link</button>
             </div>
 
-            <!-- Stage 3: Generating -->
-            <div class="stage" id="stage-generating">
-                <div class="title">⚡ Generating Key</div>
-                <div class="desc">Please wait...</div>
-                <div style="padding: 40px 0;">
-                    <div class="loading-spinner" style="width: 50px; height: 50px; border-width: 4px;"></div>
-                </div>
+            <!-- Stage 3: Loading -->
+            <div class="stage" id="stage-loading">
+                <div class="title">⚡ Generating Key...</div>
+                <div class="desc">Please wait a moment.</div>
+                <div class="spinner"></div>
             </div>
 
             <!-- Stage 4: Success -->
             <div class="stage" id="stage-success">
-                <div class="success-checkmark">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                </div>
-
+                <div class="success-icon">✓</div>
                 <div class="title">🎉 Key Generated!</div>
                 <div class="desc">Copy your key and use it in the app.</div>
 
@@ -619,122 +345,62 @@
                     <div class="result-key" id="key-display">-</div>
                 </div>
 
-                <div class="timer-box">
-                    ⏱️ Expires in: <strong id="timer-display">--:--</strong>
-                </div>
+                <div class="timer">⏱️ Expires in: <strong id="timer">--:--</strong></div>
 
                 <button class="btn btn-green" onclick="copyKey()">Copy Key</button>
-                <button class="btn btn-outline" style="margin-top: 12px;" onclick="restart()">Get New Key</button>
             </div>
 
-            <!-- Stage 5: Expired -->
-            <div class="stage" id="stage-expired">
-                <div class="title">⏰ Key Expired</div>
-                <div class="desc">Your key has expired. Get a new one.</div>
-                <button class="btn" onclick="restart()">Get New Key</button>
+            <!-- Stage 5: Error -->
+            <div class="stage" id="stage-error">
+                <div class="title">❌ Error</div>
+                <div class="desc" id="error-msg">Something went wrong.</div>
+                <button class="btn" onclick="restart()" style="margin-top: 20px;">Try Again</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ═══════════════════════════════════════════════════════════════════
-        // CONFIGURATION - PUT YOUR SHORTENER LINKS HERE
-        // ═══════════════════════════════════════════════════════════════════
-        // 
-        // When you create links in your shortener (e.g., LinkVertise, Shrinkme):
-        // Set the DESTINATION URL to:
-        //   https://YOUR-SITE.vercel.app/api/callback?token=STEP1
-        //   https://YOUR-SITE.vercel.app/api/callback?token=STEP2
-        //
-        // Then paste the shortener links below:
-        //
-        const SHORTENER_LINKS = {
-            1: 'https://gplinks.co/xsBEx25k',  // 1-Hour: Single link
-            2: 'https://gplinks.co/WcTJJmk'    // 2-Hours: Double link chain
+        // ══════════════════════════════════════════════════════════════
+        // SHORTENER LINKS - Your GPLinks
+        // ══════════════════════════════════════════════════════════════
+        const LINKS = {
+            1: 'https://gplinks.co/xsBEx25k',  // 1-Hour (callback?hours=1)
+            2: 'https://gplinks.co/WcTJJmk'    // 2-Hours (callback?hours=2)
         };
-        // ═══════════════════════════════════════════════════════════════════
+        // ══════════════════════════════════════════════════════════════
 
-        // State
-        let state = {
-            plan: 0,
-            completedSteps: 0,
-            key: null,
-            expires: null,
-            timerInterval: null
-        };
+        let selectedPlan = 0;
+        let generatedKey = null;
+        let expiresAt = null;
+        let timerInterval = null;
 
-        // Initialize
+        // Check URL on load
         (function init() {
-            // Check URL params for callback result
             const params = new URLSearchParams(window.location.search);
 
-            // Handle errors
-            const error = params.get('error');
-            if (error) {
-                showError(getErrorMessage(error));
+            // Success callback from shortener
+            if (params.get('success') === 'true') {
+                const hours = parseInt(params.get('hours')) || 1;
+                window.history.replaceState({}, '', window.location.pathname);
+                selectedPlan = hours;
+                generateKey();
+                return;
+            }
+
+            // Error callback
+            if (params.get('error')) {
+                showError('Verification failed. Please try again.');
                 window.history.replaceState({}, '', window.location.pathname);
             }
 
-            // Handle successful verification callback
-            const verified = params.get('verified');
-            if (verified) {
-                // Load state
-                loadState();
-
-                const stepCompleted = parseInt(verified);
-                state.completedSteps = stepCompleted;
-                saveState();
-
-                // Clean URL
-                window.history.replaceState({}, '', window.location.pathname);
-
-                // Check if all steps done
-                if (state.completedSteps >= state.plan) {
-                    generateKey();
-                } else {
-                    showStage('stage-links');
-                    updateProgress();
-                }
-                return;
-            }
-
-            // Load saved state
-            loadState();
-
-            // Check for existing valid key
-            if (state.key && state.expires && new Date(state.expires) > new Date()) {
-                document.getElementById('key-display').textContent = state.key;
-                showStage('stage-success');
-                startTimer();
-                return;
-            }
-
-            // Check for in-progress verification
-            if (state.plan > 0 && state.completedSteps < state.plan) {
-                showStage('stage-links');
-                updateProgress();
-                return;
+            // Check for saved key
+            const saved = JSON.parse(localStorage.getItem('ninex') || '{}');
+            if (saved.key && saved.exp && new Date(saved.exp) > new Date()) {
+                generatedKey = saved.key;
+                expiresAt = new Date(saved.exp);
+                showKey();
             }
         })();
-
-        function loadState() {
-            try {
-                const saved = JSON.parse(localStorage.getItem('ninex_data') || '{}');
-                state.plan = saved.plan || 0;
-                state.completedSteps = saved.steps || 0;
-                state.key = saved.key || null;
-                state.expires = saved.expires ? new Date(saved.expires) : null;
-            } catch (e) { }
-        }
-
-        function saveState() {
-            localStorage.setItem('ninex_data', JSON.stringify({
-                plan: state.plan,
-                steps: state.completedSteps,
-                key: state.key,
-                expires: state.expires ? state.expires.toISOString() : null
-            }));
-        }
 
         function showStage(id) {
             document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
@@ -742,94 +408,55 @@
         }
 
         function showError(msg) {
-            const el = document.getElementById('error-display');
-            el.innerHTML = `<div class="error-box">⚠️ ${msg}</div>`;
-            setTimeout(() => { el.innerHTML = ''; }, 5000);
+            document.getElementById('error-box').innerHTML = `<div class="error-box">${msg}</div>`;
+            setTimeout(() => document.getElementById('error-box').innerHTML = '', 5000);
         }
 
-        function getErrorMessage(code) {
-            const messages = {
-                'missing_params': 'Invalid link. Please try again.',
-                'invalid_token': 'Link already used or invalid. Please get a new link.',
-                'expired_token': 'Link expired. Please get a new link.',
-                'server_error': 'Server error. Please try again.'
-            };
-            return messages[code] || 'An error occurred.';
-        }
-
-        // Plan Selection
         function selectPlan(hours) {
-            state.plan = hours;
-            state.completedSteps = 0;
-
-            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-            document.getElementById(`plan-${hours}h`).classList.add('selected');
-
-            const btn = document.getElementById('btn-continue');
-            btn.disabled = false;
-            btn.textContent = `Continue with ${hours} Hour${hours > 1 ? 's' : ''}`;
+            selectedPlan = hours;
+            document.querySelectorAll('.plan').forEach((p, i) => {
+                p.classList.toggle('selected', i + 1 === hours);
+            });
+            document.getElementById('btn-start').disabled = false;
+            document.getElementById('btn-start').textContent = `Continue with ${hours} Hour${hours > 1 ? 's' : ''}`;
         }
 
         function startVerification() {
-            if (!state.plan) return;
-            saveState();
-            showStage('stage-links');
-            updateProgress();
-        }
-
-        function updateProgress() {
-            // Just update the hour number displayed
-            document.getElementById('step-num').textContent = state.plan;
-            document.getElementById('btn-open-link').disabled = false;
-            document.getElementById('btn-open-link').textContent = 'Open Verification Link';
+            if (!selectedPlan) return;
+            document.getElementById('hours-display').textContent = selectedPlan;
+            showStage('stage-verify');
         }
 
         async function openLink() {
-            // Use plan number to select link (1-hour uses link 1, 2-hour uses link 2)
-            const link = SHORTENER_LINKS[state.plan];
-            const stepNum = state.plan; // Step = plan number for callback
-
-            if (!link || link.includes('YOUR_ID') || link.includes('PLACEHOLDER')) {
-                alert('Shortener links not configured!');
-                return;
-            }
-
-            const btn = document.getElementById('btn-open-link');
+            const btn = document.getElementById('btn-open');
             btn.disabled = true;
-            btn.innerHTML = '<span class="loading-spinner"></span> Starting...';
+            btn.textContent = 'Starting...';
 
             try {
-                // ANTI-BYPASS: Create pending token before opening shortener
-                const res = await fetch('/api/start', {
+                // Create pending verification
+                await fetch('/api/start', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ step: stepNum })
+                    body: JSON.stringify({ hours: selectedPlan })
                 });
 
-                const data = await res.json();
-                if (!data.success) {
-                    throw new Error(data.error || 'Failed to start');
-                }
-
-                // Now open the shortener
-                window.open(link, '_blank');
-
+                // Open shortener
+                window.open(LINKS[selectedPlan], '_blank');
                 btn.textContent = '⏳ Complete the link...';
-            } catch (error) {
-                console.error('Start error:', error);
-                window.open(link, '_blank');
+            } catch (e) {
+                window.open(LINKS[selectedPlan], '_blank');
                 btn.textContent = '⏳ Complete the link...';
             }
         }
 
         async function generateKey() {
-            showStage('stage-generating');
+            showStage('stage-loading');
 
             try {
                 const res = await fetch('/api/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ hours: state.plan })
+                    body: JSON.stringify({ hours: selectedPlan })
                 });
 
                 const data = await res.json();
@@ -838,67 +465,67 @@
                     throw new Error(data.error || 'Failed to generate key');
                 }
 
-                state.key = `${data.username}:${data.password}`;
-                state.expires = new Date(data.expires_at);
-                state.completedSteps = 0;
-                state.plan = 0;
-                saveState();
+                generatedKey = `${data.username}:${data.password}`;
+                expiresAt = new Date(data.expires_at);
 
-                document.getElementById('key-display').textContent = state.key;
-                showStage('stage-success');
-                startTimer();
+                localStorage.setItem('ninex', JSON.stringify({
+                    key: generatedKey,
+                    exp: expiresAt.toISOString()
+                }));
 
+                showKey();
             } catch (error) {
-                alert('Error: ' + error.message);
-                restart();
+                document.getElementById('error-msg').textContent = error.message;
+                showStage('stage-error');
             }
+        }
+
+        function showKey() {
+            document.getElementById('key-display').textContent = generatedKey;
+            showStage('stage-success');
+            startTimer();
         }
 
         function startTimer() {
-            if (state.timerInterval) clearInterval(state.timerInterval);
+            if (timerInterval) clearInterval(timerInterval);
             updateTimer();
-            state.timerInterval = setInterval(updateTimer, 1000);
+            timerInterval = setInterval(updateTimer, 1000);
         }
 
         function updateTimer() {
-            if (!state.expires) return;
-
-            const diff = state.expires - new Date();
-
+            const diff = expiresAt - new Date();
             if (diff <= 0) {
-                clearInterval(state.timerInterval);
-                showStage('stage-expired');
+                clearInterval(timerInterval);
+                localStorage.removeItem('ninex');
+                restart();
                 return;
             }
-
             const h = Math.floor(diff / 3600000);
             const m = Math.floor((diff % 3600000) / 60000);
             const s = Math.floor((diff % 60000) / 1000);
-
-            let display = h > 0
-                ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-                : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-
-            document.getElementById('timer-display').textContent = display;
+            document.getElementById('timer').textContent =
+                h > 0 ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+                    : `${m}:${String(s).padStart(2, '0')}`;
         }
 
         function copyKey() {
-            navigator.clipboard.writeText(state.key).then(() => {
+            navigator.clipboard.writeText(generatedKey).then(() => {
                 const btn = event.target;
                 btn.textContent = '✓ Copied!';
-                setTimeout(() => { btn.textContent = 'Copy Key'; }, 2000);
+                setTimeout(() => btn.textContent = 'Copy Key', 2000);
             });
         }
 
         function restart() {
-            if (state.timerInterval) clearInterval(state.timerInterval);
-            state = { plan: 0, completedSteps: 0, key: null, expires: null, timerInterval: null };
-            localStorage.removeItem('ninex_data');
-
-            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-            document.getElementById('btn-continue').disabled = true;
-            document.getElementById('btn-continue').textContent = 'Select a Plan';
-
+            selectedPlan = 0;
+            generatedKey = null;
+            expiresAt = null;
+            localStorage.removeItem('ninex');
+            document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
+            document.getElementById('btn-start').disabled = true;
+            document.getElementById('btn-start').textContent = 'Select a Plan';
+            document.getElementById('btn-open').disabled = false;
+            document.getElementById('btn-open').textContent = 'Open Verification Link';
             showStage('stage-select');
         }
     </script>
