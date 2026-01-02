@@ -579,24 +579,18 @@
 
             <!-- Stage 2: Link Verification -->
             <div class="stage" id="stage-links">
-                <div class="title">🔗 Complete Link <span id="step-num">1</span></div>
-                <div class="desc">Click the button to open the verification link. Complete it and you'll return here.
-                </div>
-
-                <div class="progress-container">
-                    <div class="progress-steps" id="progress-steps"></div>
-                    <div class="progress-text">Step <span id="current-step">1</span> of <span id="total-steps">1</span>
-                    </div>
+                <div class="title">🔗 Complete Verification</div>
+                <div class="desc">Click the button below to open your verification link. Complete it to get your key.
                 </div>
 
                 <div class="link-card">
-                    <div class="link-number" id="link-label">Link 1</div>
-                    <div class="link-title">🌐 Verification Link</div>
-                    <div class="link-desc">Opens in new tab. Complete to continue.</div>
+                    <div class="link-number" id="link-label">Verification</div>
+                    <div class="link-title">🌐 <span id="step-num">1</span>-Hour Access Link</div>
+                    <div class="link-desc">Opens in new tab. Complete all steps, then return here.</div>
                 </div>
 
                 <button class="btn" id="btn-open-link" onclick="openLink()">
-                    Open Link
+                    Open Verification Link
                 </button>
             </div>
 
@@ -784,44 +778,10 @@
         }
 
         function updateProgress() {
-            const total = state.plan;
-            const current = state.completedSteps + 1;
-
-            document.getElementById('step-num').textContent = current;
-            document.getElementById('current-step').textContent = current;
-            document.getElementById('total-steps').textContent = total;
-            document.getElementById('link-label').textContent = `Link ${current} of ${total}`;
-
-            // Build progress steps
-            const container = document.getElementById('progress-steps');
-            container.innerHTML = '';
-
-            for (let i = 0; i < total; i++) {
-                if (i > 0) {
-                    const line = document.createElement('div');
-                    line.className = 'progress-line' + (i <= state.completedSteps ? ' completed' : '');
-                    container.appendChild(line);
-                }
-
-                const step = document.createElement('div');
-                step.className = 'progress-step';
-
-                if (i < state.completedSteps) {
-                    step.classList.add('completed');
-                    step.innerHTML = '✓';
-                } else if (i === state.completedSteps) {
-                    step.classList.add('active');
-                    step.textContent = i + 1;
-                } else {
-                    step.textContent = i + 1;
-                }
-
-                container.appendChild(step);
-            }
-
-            // Reset button
+            // Just update the hour number displayed
+            document.getElementById('step-num').textContent = state.plan;
             document.getElementById('btn-open-link').disabled = false;
-            document.getElementById('btn-open-link').textContent = 'Open Link';
+            document.getElementById('btn-open-link').textContent = 'Open Verification Link';
         }
 
         async function openLink() {
