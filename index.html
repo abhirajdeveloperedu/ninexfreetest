@@ -560,7 +560,8 @@
                             <span>⚡ Extended gaming session</span>
                         </div>
                         <div class="plan-links">
-                            <span class="plan-links-text">Complete <span class="plan-links-count">2 links</span></span>
+                            <span class="plan-links-text">Complete <span class="plan-links-count">1 link (2
+                                    steps)</span></span>
                         </div>
                     </div>
                 </div>
@@ -824,8 +825,9 @@
         }
 
         async function openLink() {
-            const stepNum = state.completedSteps + 1;
-            const link = SHORTENER_LINKS[stepNum];
+            // Use plan number to select link (1-hour uses link 1, 2-hour uses link 2)
+            const link = SHORTENER_LINKS[state.plan];
+            const stepNum = state.plan; // Step = plan number for callback
 
             if (!link || link.includes('YOUR_ID') || link.includes('PLACEHOLDER')) {
                 alert('Shortener links not configured!');
@@ -855,7 +857,6 @@
                 btn.textContent = '⏳ Complete the link...';
             } catch (error) {
                 console.error('Start error:', error);
-                // Still open the link even if start fails (for testing)
                 window.open(link, '_blank');
                 btn.textContent = '⏳ Complete the link...';
             }
