@@ -1,0 +1,12 @@
+{
+    "name": "ninex-keygen",
+    "version": "1.0.0",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "dev": "node server.js"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^2.39.0"
+    }
+}

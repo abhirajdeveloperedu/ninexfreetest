@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NineX - Premium Access Key</title>
+    <link rel="icon"
+        href="https://mcopfvshhvajrtgbqsem.supabase.co/storage/v1/object/public/n/photo_2025-12-31%2021.00.21.jpeg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a12 0%, #1a1025 50%, #0f0a1a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo-container {
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .brand-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a78bfa, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 12px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+        }
+
+        .title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        /* Plan Cards */
+        .plans-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .plan-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .plan-card:hover {
+            border-color: rgba(139, 92, 246, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .plan-card.selected {
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .plan-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .plan-duration {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .plan-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .plan-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .plan-links {
+            margin-top: 8px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .plan-links-text {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .plan-links-count {
+            color: #a78bfa;
+            font-weight: 600;
+        }
+
+        .check-circle {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .plan-card.selected .check-circle {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border-color: #8b5cf6;
+        }
+
+        .check-circle svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0;
+        }
+
+        .plan-card.selected .check-circle svg {
+            opacity: 1;
+        }
+
+        /* Progress */
+        .progress-container {
+            margin-bottom: 28px;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .progress-step {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+            }
+        }
+
+        .progress-step.completed {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #10b981;
+            color: white;
+        }
+
+        .progress-line {
+            width: 40px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            align-self: center;
+            border-radius: 2px;
+        }
+
+        .progress-line.completed {
+            background: linear-gradient(90deg, #10b981, #8b5cf6);
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .progress-text span {
+            color: #a78bfa;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .btn-green:hover {
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            color: #a78bfa;
+        }
+
+        .btn-outline:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: #8b5cf6;
+            box-shadow: none;
+        }
+
+        /* Link Card */
+        .link-card {
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .link-number {
+            font-size: 0.75rem;
+            color: #8b5cf6;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .link-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .link-desc {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        /* Result Box */
+        .result-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .result-label {
+            font-size: 0.75rem;
+            color: #10b981;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .result-key {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 1rem;
+            word-break: break-all;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #a5f3c4;
+        }
+
+        .timer-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 0.85rem;
+            color: #fbbf24;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Loading */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .info-box svg {
+            width: 18px;
+            height: 18px;
+            color: #3b82f6;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .info-box p {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* Success Checkmark */
+        .success-checkmark {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .success-checkmark svg {
+            width: 30px;
+            height: 30px;
+            color: white;
+        }
+
+        /* Stages */
+        .stage {
+            display: none;
+        }
+
+        .stage.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Error */
+        .error-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 16px;
+            color: #f87171;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="https://mcopfvshhvajrtgbqsem.supabase.co/storage/v1/object/public/n/photo_2025-12-31%2021.00.21.jpeg"
+                class="logo" alt="NineX Logo">
+            <div class="brand-name">NineX</div>
+        </div>
+
+        <div class="card">
+            <!-- Stage 1: Plan Selection -->
+            <div class="stage active" id="stage-select">
+                <div class="title">🔐 Choose Your Access</div>
+                <div class="desc">Select duration and complete the verification links.</div>
+
+                <div id="error-display"></div>
+
+                <div class="plans-container">
+                    <div class="plan-card" id="plan-1h" onclick="selectPlan(1)">
+                        <div class="plan-header">
+                            <div class="plan-duration">1 Hour</div>
+                            <div class="check-circle">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="plan-info">
+                            <span>⏱️ Quick access for testing</span>
+                        </div>
+                        <div class="plan-links">
+                            <span class="plan-links-text">Complete <span class="plan-links-count">1 link</span></span>
+                        </div>
+                    </div>
+
+                    <div class="plan-card" id="plan-2h" onclick="selectPlan(2)">
+                        <div class="plan-header">
+                            <div class="plan-duration">2 Hours</div>
+                            <div class="plan-badge">Best Value</div>
+                        </div>
+                        <div class="plan-info">
+                            <span>⚡ Extended gaming session</span>
+                        </div>
+                        <div class="plan-links">
+                            <span class="plan-links-text">Complete <span class="plan-links-count">2 links</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn" id="btn-continue" onclick="startVerification()" disabled>Select a Plan</button>
+
+                <div class="info-box">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p>Complete each link fully. After completion, you'll be redirected back here automatically.</p>
+                </div>
+            </div>
+
+            <!-- Stage 2: Link Verification -->
+            <div class="stage" id="stage-links">
+                <div class="title">🔗 Complete Link <span id="step-num">1</span></div>
+                <div class="desc">Click the button to open the verification link. Complete it and you'll return here.
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-steps" id="progress-steps"></div>
+                    <div class="progress-text">Step <span id="current-step">1</span> of <span id="total-steps">1</span>
+                    </div>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-number" id="link-label">Link 1</div>
+                    <div class="link-title">🌐 Verification Link</div>
+                    <div class="link-desc">Opens in new tab. Complete to continue.</div>
+                </div>
+
+                <button class="btn" id="btn-open-link" onclick="openLink()">
+                    Open Link
+                </button>
+            </div>
+
+            <!-- Stage 3: Generating -->
+            <div class="stage" id="stage-generating">
+                <div class="title">⚡ Generating Key</div>
+                <div class="desc">Please wait...</div>
+                <div style="padding: 40px 0;">
+                    <div class="loading-spinner" style="width: 50px; height: 50px; border-width: 4px;"></div>
+                </div>
+            </div>
+
+            <!-- Stage 4: Success -->
+            <div class="stage" id="stage-success">
+                <div class="success-checkmark">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+
+                <div class="title">🎉 Key Generated!</div>
+                <div class="desc">Copy your key and use it in the app.</div>
+
+                <div class="result-box">
+                    <div class="result-label">✅ Your Access Key</div>
+                    <div class="result-key" id="key-display">-</div>
+                </div>
+
+                <div class="timer-box">
+                    ⏱️ Expires in: <strong id="timer-display">--:--</strong>
+                </div>
+
+                <button class="btn btn-green" onclick="copyKey()">Copy Key</button>
+                <button class="btn btn-outline" style="margin-top: 12px;" onclick="restart()">Get New Key</button>
+            </div>
+
+            <!-- Stage 5: Expired -->
+            <div class="stage" id="stage-expired">
+                <div class="title">⏰ Key Expired</div>
+                <div class="desc">Your key has expired. Get a new one.</div>
+                <button class="btn" onclick="restart()">Get New Key</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════════
+        // CONFIGURATION - PUT YOUR SHORTENER LINKS HERE
+        // ═══════════════════════════════════════════════════════════════════
+        // 
+        // When you create links in your shortener (e.g., LinkVertise, Shrinkme):
+        // Set the DESTINATION URL to:
+        //   https://YOUR-SITE.vercel.app/api/callback?token=STEP1
+        //   https://YOUR-SITE.vercel.app/api/callback?token=STEP2
+        //
+        // Then paste the shortener links below:
+        //
+        const SHORTENER_LINKS = {
+            1: 'https://link-hub.net/YOUR_ID/step1',  // Link for step 1
+            2: 'https://link-hub.net/YOUR_ID/step2'   // Link for step 2
+        };
+        // ═══════════════════════════════════════════════════════════════════
+
+        // State
+        let state = {
+            plan: 0,
+            completedSteps: 0,
+            key: null,
+            expires: null,
+            timerInterval: null
+        };
+
+        // Initialize
+        (function init() {
+            // Check URL params for callback result
+            const params = new URLSearchParams(window.location.search);
+
+            // Handle errors
+            const error = params.get('error');
+            if (error) {
+                showError(getErrorMessage(error));
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+
+            // Handle successful verification callback
+            const verified = params.get('verified');
+            if (verified) {
+                // Load state
+                loadState();
+
+                const stepCompleted = parseInt(verified);
+                state.completedSteps = stepCompleted;
+                saveState();
+
+                // Clean URL
+                window.history.replaceState({}, '', window.location.pathname);
+
+                // Check if all steps done
+                if (state.completedSteps >= state.plan) {
+                    generateKey();
+                } else {
+                    showStage('stage-links');
+                    updateProgress();
+                }
+                return;
+            }
+
+            // Load saved state
+            loadState();
+
+            // Check for existing valid key
+            if (state.key && state.expires && new Date(state.expires) > new Date()) {
+                document.getElementById('key-display').textContent = state.key;
+                showStage('stage-success');
+                startTimer();
+                return;
+            }
+
+            // Check for in-progress verification
+            if (state.plan > 0 && state.completedSteps < state.plan) {
+                showStage('stage-links');
+                updateProgress();
+                return;
+            }
+        })();
+
+        function loadState() {
+            try {
+                const saved = JSON.parse(localStorage.getItem('ninex_data') || '{}');
+                state.plan = saved.plan || 0;
+                state.completedSteps = saved.steps || 0;
+                state.key = saved.key || null;
+                state.expires = saved.expires ? new Date(saved.expires) : null;
+            } catch (e) { }
+        }
+
+        function saveState() {
+            localStorage.setItem('ninex_data', JSON.stringify({
+                plan: state.plan,
+                steps: state.completedSteps,
+                key: state.key,
+                expires: state.expires ? state.expires.toISOString() : null
+            }));
+        }
+
+        function showStage(id) {
+            document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('error-display');
+            el.innerHTML = `<div class="error-box">⚠️ ${msg}</div>`;
+            setTimeout(() => { el.innerHTML = ''; }, 5000);
+        }
+
+        function getErrorMessage(code) {
+            const messages = {
+                'missing_params': 'Invalid link. Please try again.',
+                'invalid_token': 'Link already used or invalid. Please get a new link.',
+                'expired_token': 'Link expired. Please get a new link.',
+                'server_error': 'Server error. Please try again.'
+            };
+            return messages[code] || 'An error occurred.';
+        }
+
+        // Plan Selection
+        function selectPlan(hours) {
+            state.plan = hours;
+            state.completedSteps = 0;
+
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById(`plan-${hours}h`).classList.add('selected');
+
+            const btn = document.getElementById('btn-continue');
+            btn.disabled = false;
+            btn.textContent = `Continue with ${hours} Hour${hours > 1 ? 's' : ''}`;
+        }
+
+        function startVerification() {
+            if (!state.plan) return;
+            saveState();
+            showStage('stage-links');
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const total = state.plan;
+            const current = state.completedSteps + 1;
+
+            document.getElementById('step-num').textContent = current;
+            document.getElementById('current-step').textContent = current;
+            document.getElementById('total-steps').textContent = total;
+            document.getElementById('link-label').textContent = `Link ${current} of ${total}`;
+
+            // Build progress steps
+            const container = document.getElementById('progress-steps');
+            container.innerHTML = '';
+
+            for (let i = 0; i < total; i++) {
+                if (i > 0) {
+                    const line = document.createElement('div');
+                    line.className = 'progress-line' + (i <= state.completedSteps ? ' completed' : '');
+                    container.appendChild(line);
+                }
+
+                const step = document.createElement('div');
+                step.className = 'progress-step';
+
+                if (i < state.completedSteps) {
+                    step.classList.add('completed');
+                    step.innerHTML = '✓';
+                } else if (i === state.completedSteps) {
+                    step.classList.add('active');
+                    step.textContent = i + 1;
+                } else {
+                    step.textContent = i + 1;
+                }
+
+                container.appendChild(step);
+            }
+
+            // Reset button
+            document.getElementById('btn-open-link').disabled = false;
+            document.getElementById('btn-open-link').textContent = 'Open Link';
+        }
+
+        function openLink() {
+            const stepNum = state.completedSteps + 1;
+            const link = SHORTENER_LINKS[stepNum];
+
+            if (!link || link.includes('YOUR_ID')) {
+                alert('Shortener links not configured! Check the code.');
+                return;
+            }
+
+            // Open the shortener link
+            window.open(link, '_blank');
+
+            // Update button
+            const btn = document.getElementById('btn-open-link');
+            btn.disabled = true;
+            btn.textContent = '⏳ Complete the link...';
+        }
+
+        async function generateKey() {
+            showStage('stage-generating');
+
+            try {
+                const res = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hours: state.plan })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.error || 'Failed to generate key');
+                }
+
+                state.key = `${data.username}:${data.password}`;
+                state.expires = new Date(data.expires_at);
+                state.completedSteps = 0;
+                state.plan = 0;
+                saveState();
+
+                document.getElementById('key-display').textContent = state.key;
+                showStage('stage-success');
+                startTimer();
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                restart();
+            }
+        }
+
+        function startTimer() {
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            updateTimer();
+            state.timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (!state.expires) return;
+
+            const diff = state.expires - new Date();
+
+            if (diff <= 0) {
+                clearInterval(state.timerInterval);
+                showStage('stage-expired');
+                return;
+            }
+
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+
+            let display = h > 0
+                ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+                : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+            document.getElementById('timer-display').textContent = display;
+        }
+
+        function copyKey() {
+            navigator.clipboard.writeText(state.key).then(() => {
+                const btn = event.target;
+                btn.textContent = '✓ Copied!';
+                setTimeout(() => { btn.textContent = 'Copy Key'; }, 2000);
+            });
+        }
+
+        function restart() {
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            state = { plan: 0, completedSteps: 0, key: null, expires: null, timerInterval: null };
+            localStorage.removeItem('ninex_data');
+
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('btn-continue').disabled = true;
+            document.getElementById('btn-continue').textContent = 'Select a Plan';
+
+            showStage('stage-select');
+        }
+    </script>
+</body>
+
+</html>
