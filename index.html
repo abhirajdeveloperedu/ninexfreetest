@@ -19,7 +19,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0a0a12 0%, #1a1025 50%, #0f0a1a 100%);
+            background: #000000;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -38,9 +38,8 @@
             width: 100%;
             height: 100%;
             background:
-                radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 60%);
+                radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.08) 0%, transparent 40%);
             pointer-events: none;
             z-index: -1;
         }
@@ -489,12 +488,24 @@
                         <div class="feature-text">Aimbot</div>
                     </div>
                     <div class="feature">
+                        <div class="feature-icon">🔫</div>
+                        <div class="feature-text">AimSilent</div>
+                    </div>
+                    <div class="feature">
                         <div class="feature-icon">👁️</div>
                         <div class="feature-text">ESP</div>
                     </div>
                     <div class="feature">
-                        <div class="feature-icon">⚡</div>
-                        <div class="feature-text">No Recoil</div>
+                        <div class="feature-icon">🛡️</div>
+                        <div class="feature-text">AntiBan</div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">✅</div>
+                        <div class="feature-text">Fully Safe</div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">📱</div>
+                        <div class="feature-text">Root + Non</div>
                     </div>
                 </div>
 
@@ -591,6 +602,18 @@
                 </div>
 
                 <button class="btn btn-green" onclick="copyKey()">📋 Copy Key to Clipboard</button>
+
+                <div
+                    style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 16px; margin-top: 16px; text-align: left;">
+                    <div style="font-size: 0.9rem; font-weight: 600; color: #60a5fa; margin-bottom: 8px;">📦 Files &
+                        Setup Guide</div>
+                    <div style="font-size: 0.8rem; color: #94a3b8; line-height: 1.6; margin-bottom: 12px;">Get the APK
+                        files, tutorial videos, and complete setup guide by joining our Telegram channel.</div>
+                    <a href="https://t.me/+GAQ8xht-oXljNGQ9" target="_blank"
+                        style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #0088cc, #0077b5); color: white; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 600; font-size: 0.9rem;">
+                        <span>📲</span> Join Telegram Channel
+                    </a>
+                </div>
 
                 <button class="btn" onclick="restart()" style="margin-top: 12px; background: rgba(255,255,255,0.1);">
                     🔄 Get New Key
